@@ -165,8 +165,28 @@ document.addEventListener("DOMContentLoaded", function () {
             this.$stepInstructions[0].parentElement.parentElement.hidden = this.currentStep >= 5;
             this.$step.parentElement.hidden = this.currentStep >= 5;
 
-            // TODO: get data from inputs and show them in summary
+            // show submit form
+
             if (this.currentStep == 5) {
+
+                let quantity = $('input[name="quantity"]').val();
+                if (!!quantity) {
+                    $('#quantitySum').text(quantity);
+                }
+
+                let categories = "";
+                $.each($('input[name="categories"]:checked'), function () {
+                    categories += $(this).parent().children('span.description').text() + " ";
+                });
+                if(!!categories) {
+                    $('#categorySum').text(categories);
+                }
+
+                let institution = $('input[name="organization"]:checked').parent().children('.description').children('.title').text();
+                if(!!institution) {
+                    $('#institutionSum').text(institution);
+                }
+
                 let street = $('input[name="street"]').val();
                 if (!!street) {
                     $('#streetSum').text(street);
