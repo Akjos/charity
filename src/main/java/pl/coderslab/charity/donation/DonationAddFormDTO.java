@@ -4,6 +4,9 @@ import lombok.Data;
 import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -12,18 +15,24 @@ import java.util.List;
 @ToString
 public class DonationAddFormDTO {
 
-    private List<Integer> categories;
+    @NotNull
+    private List<Long> categories;
 
-    private Integer organization;
+    @NotNull
+    private Long organization;
 
     private String zipCode;
 
+    @NotNull
     private String street;
 
+    @NotEmpty
     private String city;
 
+    @NotNull
     private Integer Quantity;
 
+    @Size(max = 2500)
     private String pickUpComment;
 
     private String phone;
