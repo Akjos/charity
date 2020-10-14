@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<html lang="pl" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
 </head>
@@ -8,6 +8,7 @@
     <nav class="container container--70">
 
         <!--/*/ <th:block th:include="fragments/fragments.html :: button-login-register"></th:block> /*/-->
+        <!--/*/ <th:block th:include="fragments/fragments.html :: button-for-logged-user"></th:block> /*/-->
 
         <ul>
             <li><a href="" class="btn btn--without-border active">Start</a></li>
@@ -30,13 +31,27 @@
 </div>
 
 <div th:fragment="button-login-register">
-    <ul class="nav--actions">
+    <ul class="nav--actions" sec:authorize="!isAuthenticated()">
         <li><a th:href="@{/user/login}" class="btn btn--small btn--without-border">Zaloguj</a></li>
         <li><a th:href="@{/user/register}" class="btn btn--small btn--highlighted">Załóż konto</a></li>
     </ul>
 </div>
 
+<div th:fragment="button-for-logged-user">
+    <ul class="nav--actions" sec:authorize="isAuthenticated()">
+        <li class="logged-user">
+            Witaj Agata
+            <ul class="dropdown">
+                <li><a href="#">Profil</a></li>
+                <li><a href="#">Moje zbiórki</a></li>
+                <li><a th:href="@{/logout}">Wyloguj</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
 <div th:fragment="ul-menu-subpage">
+    <!--/*/ <th:block th:include="fragments/fragments.html :: button-login-register"></th:block> /*/-->
+    <!--/*/ <th:block th:include="fragments/fragments.html :: button-for-logged-user"></th:block> /*/-->
     <ul>
         <li><a th:href="@{/}" class="btn btn--without-border active">Start</a></li>
         <li><a th:href="@{/#steps}" class="btn btn--without-border">O co chodzi?</a></li>
