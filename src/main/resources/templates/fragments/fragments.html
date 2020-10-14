@@ -31,7 +31,7 @@
 
 <div th:fragment="button-login-register">
     <ul class="nav--actions">
-        <li><a href="" class="btn btn--small btn--without-border">Zaloguj</a></li>
+        <li><a th:href="@{/user/login}" class="btn btn--small btn--without-border">Zaloguj</a></li>
         <li><a th:href="@{/user/register}" class="btn btn--small btn--highlighted">Załóż konto</a></li>
     </ul>
 </div>
