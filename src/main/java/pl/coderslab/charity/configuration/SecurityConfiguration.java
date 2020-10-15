@@ -42,6 +42,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .httpBasic().and()
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
+                .antMatchers("/api/institutions/**").permitAll()
                 .antMatchers("/donation/**").authenticated()
                 .and().formLogin()
                 .loginPage("/user/login")
@@ -52,6 +53,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/")
                 .invalidateHttpSession(true)
                 .clearAuthentication(true)
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"));
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .and()
+                .csrf().disable()
+                .formLogin().disable();;
     }
 }
