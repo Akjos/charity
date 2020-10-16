@@ -1,7 +1,6 @@
 package pl.coderslab.charity.donation;
 
 import lombok.Data;
-import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotEmpty;
@@ -12,7 +11,6 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Data
-@ToString
 public class DonationAddFormDTO {
 
     @NotNull

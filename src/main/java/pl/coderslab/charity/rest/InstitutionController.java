@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.coderslab.charity.domain.model.Institution;
+import pl.coderslab.charity.institution.InstitutionDTO;
 import pl.coderslab.charity.institution.InstitutionService;
 
 import java.net.URI;
@@ -27,17 +28,20 @@ public class InstitutionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Institution create(@RequestBody Institution institution, @RequestHeader HttpHeaders headers) {
-        institution = institutionService.save(institution);
-        log.debug("institution get from JSON: {}", institution);
-        headers.setLocation(URI.create("/api/institutions/" + institution.getId()));
+    public ResponseEntity create(@RequestBody InstitutionDTO institutionDTO, @RequestHeader HttpHeaders headers) {
+        Long id = institutionService.save(institutionDTO);
+        log.debug("institution get from JSON: {}", institutionDTO);
+        headers.setLocation(URI.create("/api/institutions/" + id));
         log.debug("http headers: {}", headers);
-        return institution;
+        ResponseEntity responseEntity = new ResponseEntity(institutionDTO, headers, HttpStatus.OK);
+        return responseEntity;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity getOne(@PathVariable Long id) {
-        return institutionService.getById(id);
+        ResponseEntity responseEntity = institutionService.getById(id);
+        log.debug("ResponseEntity from db : {}", responseEntity);
+        return responseEntity;
     }
 
     @DeleteMapping("/{id}")
@@ -47,7 +51,7 @@ public class InstitutionController {
     }
 
     @PutMapping("/{id}")
-    public Institution updateOne(@RequestBody Institution institution) {
-        return institutionService.update(institution);
+    public Institution updateOne(@PathVariable Long id, @RequestBody InstitutionDTO institutionDTO) {
+        return institutionService.update(id, institutionDTO);
     }
 }
