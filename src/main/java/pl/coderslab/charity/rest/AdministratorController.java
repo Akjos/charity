@@ -40,4 +40,24 @@ public class AdministratorController {
 //        Czy chciałbym tu zwracać URL w headers?
         return new ResponseEntity(userService.saveAdmin(userRegisterDTO), HttpStatus.CREATED);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity getOne(@PathVariable Long id) {
+        ResponseEntity responseEntity = userService.getById(id);
+        log.debug("ResponseEntity from db : {}", responseEntity);
+        return responseEntity;
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteOne(@PathVariable Long id) {
+        return new ResponseEntity(userService.deleteById(id), HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity updateOne(@PathVariable Long id, @RequestBody UserRegisterDTO userRegisterDTO) {
+        if(!userRegisterDTO.getPassword().equals(userRegisterDTO.getRepassword())) {
+            return new ResponseEntity("Password don't match", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(userService.update(id, userRegisterDTO), HttpStatus.OK);
+    }
 }
