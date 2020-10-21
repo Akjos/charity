@@ -2,16 +2,12 @@ package pl.coderslab.charity.rest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.coderslab.charity.domain.model.Institution;
 import pl.coderslab.charity.institution.InstitutionDTO;
 import pl.coderslab.charity.institution.InstitutionService;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/institutions")
@@ -22,36 +18,39 @@ public class InstitutionController {
     private final InstitutionService institutionService;
 
     @GetMapping
-    public List<Institution> getAll() {
-        return institutionService.getInstitutionList();
+    public ResponseEntity getAll() {
+        log.debug("Controller: Get all institution ");
+        return ResponseEntity.ok(institutionService.getInstitutionList());
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity create(@RequestBody InstitutionDTO institutionDTO, @RequestHeader HttpHeaders headers) {
+    public ResponseEntity create(@RequestBody InstitutionDTO institutionDTO) {
         Long id = institutionService.save(institutionDTO);
-        log.debug("institution get from JSON: {}", institutionDTO);
-        headers.setLocation(URI.create("/api/institutions/" + id));
-        log.debug("http headers: {}", headers);
-        ResponseEntity responseEntity = new ResponseEntity(institutionDTO, headers, HttpStatus.OK);
-        return responseEntity;
+        log.debug("Controller: Institution DTO get from JSON: {}", institutionDTO);
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setLocation(URI.create("/api/institutions/" + id));
+//        ResponseEntity responseEntity = new ResponseEntity(institutionDTO, headers, HttpStatus.OK);
+        return ResponseEntity.ok().location(URI.create("/app/institutions/" + id)).body(institutionDTO);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity getOne(@PathVariable Long id) {
-        ResponseEntity responseEntity = institutionService.getById(id);
-        log.debug("ResponseEntity from db : {}", responseEntity);
-        return responseEntity;
+        log.debug("Controller: Get institution by id: {}", id);
+        return institutionService.getById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Institution deleteOne(@PathVariable Long id) {
-        return institutionService.deleteById(id);
+    public ResponseEntity deleteOne(@PathVariable Long id) {
+        log.debug("Controller: Delete institution by id: {}", id);
+        institutionService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
-    public Institution updateOne(@PathVariable Long id, @RequestBody InstitutionDTO institutionDTO) {
-        return institutionService.update(id, institutionDTO);
+    public ResponseEntity updateOne(@PathVariable Long id, @RequestBody InstitutionDTO institutionDTO) {
+        log.debug("Controller: Update institution by id: {}, new date institution {}", id, institutionDTO);
+        return ResponseEntity.ok().body(institutionService.update(id, institutionDTO));
     }
 }
