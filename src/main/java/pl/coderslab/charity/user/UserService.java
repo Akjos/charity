@@ -2,7 +2,6 @@ package pl.coderslab.charity.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.coderslab.charity.domain.model.User;
@@ -23,15 +22,18 @@ public class UserService {
     private final UserRepository userRepository;
 
     public void addUserToDb(UserRegisterDTO userDTO) {
-        User userToSave = new User();
-        userToSave.setUsername(userDTO.getUsername());
-        userToSave.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        userToSave.setActive(true);
-        userToSave.setRole(roleRepository.findByName("ROLE_USER"));
+        User userToSave = User.builder()
+                .active(true)
+                .username(userDTO.getUsername())
+                .role(roleRepository.findByName("ROLE_USER"))
+                .password(passwordEncoder.encode(userDTO.getPassword()))
+                .build();
+        log.debug("Service: User to save in db: {}", userDTO);
         userRepository.save(userToSave);
     }
 
     public List<UserViewDTO> getAllAdmin() {
+        log.debug("Service: Get all user with ROLE_ADMIN");
         return userRepository.findAllActiveUsers("ROLE_ADMIN");
     }
 
@@ -39,25 +41,29 @@ public class UserService {
         if (userRepository.countByUsername(userRegisterDTO.getUsername())) {
             throw new InvalidDataException("Duplicate Username");
         }
-        User adminUser = new User();
-        adminUser.setUsername(userRegisterDTO.getUsername());
-        User userToSave = new User();
-        userToSave.setUsername(userRegisterDTO.getUsername());
-        userToSave.setPassword(passwordEncoder.encode(userRegisterDTO.getPassword()));
-        userToSave.setActive(true);
-        userToSave.setRole(roleRepository.findByName("ROLE_ADMIN"));
+
+        User userToSave = User.builder()
+                .active(true)
+                .username(userRegisterDTO.getUsername())
+                .role(roleRepository.findByName("ROLE_ADMIN"))
+                .password(passwordEncoder.encode(userRegisterDTO.getPassword()))
+                .build();
+
+        log.debug("Service: User to save in db: {}", userToSave);
         User saveUser = userRepository.save(userToSave);
-        UserViewDTO userViewDTO = new UserViewDTO();
-        userViewDTO.setId(saveUser.getId());
-        userViewDTO.setUsername(saveUser.getUsername());
-        userViewDTO.setRole(saveUser.getRole().getName());
+
+        UserViewDTO userViewDTO = UserViewDTO.builder()
+                .username(saveUser.getUsername())
+                .id(saveUser.getId())
+                .role(saveUser.getRole().getName())
+                .build();
+
         return userViewDTO;
     }
 
-    public ResponseEntity getById(Long id) {
-        return userRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public Optional<User> getById(Long id) {
+        log.debug("Service find user by id: {}", id);
+        return userRepository.findById(id);
     }
 
     public User deleteById(Long id) {

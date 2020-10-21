@@ -12,6 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @ToString(exclude = "password")
 @EqualsAndHashCode(of = "id")
+@Builder
 public class User {
 
     @Id

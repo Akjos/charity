@@ -1,5 +1,6 @@
 package pl.coderslab.charity.user;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -7,6 +8,7 @@ import javax.validation.constraints.NotEmpty;
 
 @Data
 @NoArgsConstructor
+@Builder
 public class UserViewDTO {
 
     private Long id;
