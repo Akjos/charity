@@ -2,8 +2,6 @@ package pl.coderslab.charity.rest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +11,6 @@ import pl.coderslab.charity.user.UserViewDTO;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -25,8 +22,8 @@ public class AdministratorController {
     private final UserService userService;
 
     @GetMapping
-    public List<UserViewDTO> getAll() {
-        return userService.getAllAdmin();
+    public ResponseEntity getAll() {
+        return ResponseEntity.ok(userService.getAllAdmin());
     }
 
     @PostMapping
@@ -36,17 +33,15 @@ public class AdministratorController {
             bindingResult.rejectValue("repassword", "error.repassword", "Password don't match");
         }
         if (bindingResult.hasErrors()) {
-            return new ResponseEntity(bindingResult.getAllErrors().stream().map(e -> e.getDefaultMessage()).collect(Collectors.toList()), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors().stream().map(e -> e.getDefaultMessage()).collect(Collectors.toList()));
         }
         UserViewDTO userViewDTO = userService.saveAdmin(userRegisterDTO);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("/api/institutions/" + userViewDTO.getId()));
-        return new ResponseEntity(userViewDTO, headers, HttpStatus.CREATED);
+        return ResponseEntity.created(URI.create("/api/institutions/" + userViewDTO.getId())).body(userViewDTO);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity getOne(@PathVariable Long id) {
-        log.debug("Controller: Get user by id", id);
+        log.debug("Controller: Get user by id: {}", id);
         return userService.getById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -55,7 +50,8 @@ public class AdministratorController {
     @DeleteMapping("/{id}")
     public ResponseEntity deleteOne(@PathVariable Long id) {
         log.debug("Delete user by id: {}", id);
-        return new ResponseEntity(userService.deleteById(id), HttpStatus.NO_CONTENT);
+        userService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")

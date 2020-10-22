@@ -66,14 +66,13 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    public User deleteById(Long id) {
+    public void deleteById(Long id) {
         Optional<User> user = userRepository.findById(id);
         if (!user.isPresent()) {
             throw new InvalidDataException();
         }
         log.debug("Institution to delete: {}", user.get());
         userRepository.delete(user.get());
-        return user.get();
     }
 
     public UserViewDTO update(Long id, UserRegisterDTO userRegisterDTO) {
@@ -92,10 +91,11 @@ public class UserService {
             user.setPassword(passwordEncoder.encode(userRegisterDTO.getPassword()));
         }
         userRepository.save(user);
-        UserViewDTO userViewDTO = new UserViewDTO();
-        userViewDTO.setId(user.getId());
-        userViewDTO.setUsername(user.getUsername());
-        userViewDTO.setRole(user.getRole().getName());
+        UserViewDTO userViewDTO = UserViewDTO.builder()
+                .username(user.getUsername())
+                .role(user.getRole().getName())
+                .id(user.getId())
+                .build();
         return userViewDTO;
     }
 }
