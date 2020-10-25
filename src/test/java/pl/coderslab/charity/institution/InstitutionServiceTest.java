@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import pl.coderslab.charity.domain.model.Institution;
 import pl.coderslab.charity.domain.repositories.InstitutionRepository;
+import pl.coderslab.charity.rest.InvalidDataException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,4 +82,73 @@ public class InstitutionServiceTest {
         assertTrue(returnOptional.get().getId() == 1L);
     }
 
+    @Test
+    public void shouldDeleteById() {
+//        given
+        Optional<Institution> mockInstitution = Optional.of(new Institution());
+        Mockito.when(institutionRepositoryMock.findById(Mockito.anyLong())).thenReturn(mockInstitution);
+
+//        when
+        testObject.deleteById(Mockito.anyLong());
+
+//        then
+        Mockito.verify(institutionRepositoryMock, Mockito.times(1)).findById(Mockito.anyLong());
+        Mockito.verify(institutionRepositoryMock, Mockito.times(1)).delete(mockInstitution.get());
+
+    }
+
+    @Test(expected = InvalidDataException.class)
+    public void shouldThrowExceptionWhenDeleteById() {
+//        given
+        Mockito.when(institutionRepositoryMock.findById(Mockito.anyLong())).thenReturn(Optional.empty());
+
+//        when
+        testObject.deleteById(Mockito.anyLong());
+
+//        than
+//        trow InvalidDataException
+
+    }
+
+    @Test
+    public void shouldUpdate() {
+//        given
+        ArgumentCaptor<Institution> argumentCaptor = ArgumentCaptor.forClass(Institution.class);
+        Long id = 5L;
+        InstitutionDTO institutionDTO = InstitutionDTO.builder()
+                .name(INSTITUTION_NAME)
+                .description(INSTITUTION_DESCRIPTION).build();
+        Optional<Institution> institution = Optional.of(
+                Institution.builder()
+                        .id(id)
+                        .name(INSTITUTION_NAME)
+                        .description(INSTITUTION_DESCRIPTION)
+                        .build()
+        );
+
+        Mockito.when(institutionRepositoryMock.findById(id)).thenReturn(institution);
+        Mockito.when(institutionRepositoryMock.save(Mockito.any(Institution.class))).thenReturn(institution.get());
+
+//        when
+        Institution updateObject = testObject.update(id, institutionDTO);
+
+//        than
+        assertNotNull(updateObject);
+        Mockito.verify(institutionRepositoryMock, Mockito.times(1)).save(argumentCaptor.capture());
+        assertEquals(institutionDTO.getName(), argumentCaptor.getValue().getName());
+        assertEquals(institutionDTO.getDescription(), argumentCaptor.getValue().getDescription());
+        assertEquals(id, argumentCaptor.getValue().getId());
+    }
+
+    @Test(expected = InvalidDataException.class)
+    public void shouldThrowExceptionWhenUpdate() {
+//        when
+        Mockito.when(institutionRepositoryMock.findById(Mockito.anyLong())).thenReturn(Optional.empty());
+
+//        given
+        testObject.update(Mockito.anyLong(), new InstitutionDTO());
+
+//        then
+
+    }
 }

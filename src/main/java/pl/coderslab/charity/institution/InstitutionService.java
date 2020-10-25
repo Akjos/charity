@@ -46,11 +46,12 @@ public class InstitutionService {
 
 
     public Institution update(Long id, InstitutionDTO institutionDTO) {
-        Institution institution = institutionRepository.getById(id);
-        log.debug("Service: Institution to delete: {}", institution);
-        if (institution == null) {
+        Optional<Institution> institutionOptional = institutionRepository.findById(id);
+        if (!institutionOptional.isPresent()) {
             throw new InvalidDataException();
         }
+        Institution institution = institutionOptional.get();
+        log.debug("Service: Institution to delete: {}", institution);
         institution.setId(id);
         institution.setName(institutionDTO.getName());
         institution.setDescription(institutionDTO.getDescription());

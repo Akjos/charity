@@ -1,9 +1,6 @@
 package pl.coderslab.charity.domain.model;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -13,6 +10,8 @@ import javax.persistence.*;
 @Setter
 @ToString
 @EqualsAndHashCode(of = "id")
+@Builder
+@AllArgsConstructor
 public class Institution {
 
     @Id
@@ -24,4 +23,8 @@ public class Institution {
 
     @Column
     private String description;
+
+    public Institution() {
+
+    }
 }
