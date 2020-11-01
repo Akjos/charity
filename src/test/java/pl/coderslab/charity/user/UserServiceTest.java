@@ -1,5 +1,6 @@
 package pl.coderslab.charity.user;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.coderslab.charity.domain.model.Role;
 import pl.coderslab.charity.domain.model.User;
@@ -16,11 +18,12 @@ import pl.coderslab.charity.domain.repositories.UserRepository;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
+@Slf4j
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
 
@@ -32,7 +35,7 @@ public class UserServiceTest {
     private Long userId = 4L;
 
     @Spy
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Mock
     private UserRepository userRepositoryMock;
@@ -59,6 +62,7 @@ public class UserServiceTest {
         Optional<User> returnUser = testObject.getById(userId);
 
 //        then
+        assertTrue(returnUser.isPresent());
         assertEquals(user, returnUser.get());
 
     }
@@ -81,16 +85,27 @@ public class UserServiceTest {
 //        then
         verify(userRepositoryMock, times(1)).save(argumentCaptor.capture());
         assertEquals(userRegisterDTO.getUsername(), argumentCaptor.getValue().getUsername());
-        assertEquals(passwordEncoder.encode(userRegisterDTO.getPassword()), argumentCaptor.getValue().getPassword());
+        assertFalse(argumentCaptor.getValue().getPassword().isEmpty());
         assertEquals(userRole, argumentCaptor.getValue().getRole());
-
     }
 
     @Test
     public void shouldEncodePasswordAddUserToDb() {
 //        given
         ArgumentCaptor<User> argumentCaptor = ArgumentCaptor.forClass(User.class);
+        UserRegisterDTO userRegisterDTO = UserRegisterDTO.builder()
+                .password("password")
+                .build();
+        when(roleRepositoryMock.findByName(userRoleName)).thenReturn(userRole);
+        when(userRepositoryMock.save(any(User.class))).thenReturn(user);
 
+//        when
+        testObject.addUserToDb(userRegisterDTO);
+
+
+//        then
+        verify(userRepositoryMock).save(argumentCaptor.capture());
+        assertTrue(passwordEncoder.matches(userRegisterDTO.getPassword(), argumentCaptor.getValue().getPassword()));
     }
 
 }

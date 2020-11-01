@@ -13,5 +13,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<UserViewDTO> findAllActiveUsers(String roleName);
 
     @Query(value = "SELECT CASE WHEN (COUNT(u) > 0) THEN TRUE ELSE FALSE END FROM User u WHERE u.username = :username")
-    Boolean countByUsername(String username);
+    Boolean checkIfUserExistByUsername(String username);
 }

@@ -28,7 +28,7 @@ public class UserService {
                 .role(roleRepository.findByName("ROLE_USER"))
                 .password(passwordEncoder.encode(userDTO.getPassword()))
                 .build();
-        log.debug("Service: User to save in db: {}", userDTO);
+        log.debug("Service: User to save in db: {}", userToSave);
         userRepository.save(userToSave);
     }
 
@@ -38,7 +38,7 @@ public class UserService {
     }
 
     public UserViewDTO saveAdmin(UserRegisterDTO userRegisterDTO) {
-        if (userRepository.countByUsername(userRegisterDTO.getUsername())) {
+        if (userRepository.checkIfUserExistByUsername(userRegisterDTO.getUsername())) {
             throw new InvalidDataException("Duplicate Username");
         }
 
@@ -82,7 +82,7 @@ public class UserService {
         }
         User user = userOptional.get();
         if (!user.getUsername().equals(userRegisterDTO.getUsername())) {
-            if (userRepository.countByUsername(userRegisterDTO.getUsername())) {
+            if (userRepository.checkIfUserExistByUsername(userRegisterDTO.getUsername())) {
                 throw new InvalidDataException("Duplicate Username");
             }
             user.setUsername(userRegisterDTO.getUsername());
