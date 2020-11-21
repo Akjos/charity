@@ -1,11 +1,20 @@
-##Oddam w dobre ręce
+#Charity Project
 
-Celem projektu jest stworzenie miejsca, w którym każdy będzie mógł oddać niepotrzebne rzeczy zaufanym instytucjom.
+Application for charity organizations in which users can easily give unnecessary things to those in need.
+Created to complete the portfolio project in Coders Lab. Part of the project created using MVC and part REST.
 
------------------------------------------------------------------
+##Technologies
 
-## Skąd pomysł na projekt?
+-Spring boot 
 
--  Użytkownik ma w domu rzeczy, których nie używa, ale są  one w dobrym stanie i chce przekazać je osobom, którym się mogą przydać - nie wie jednak jak w prosty sposób to zrobić.
-- Jest wiele dostępnych rozwiązań, ale wiele z nich wymaga dodatkowego wysiłku lub nie budzą one zaufania.
-W zweryfikowane miejsca trzeba pojechać, a nie ma na to czasu lub nie ma jak tam pojechać. Natomiast kontenery pod domem lub lokalne zbiórki są niezweryfikowane i nie wiadomo czy te rzeczy faktycznie trafią do potrzebujących. 
+-Spring Security
+
+-Hibernate
+
+-Thymeleaf
+
+-Junit
+
+
+
+###### (Views in application have been prepared by CodersLab)
