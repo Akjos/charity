@@ -1,19 +1,19 @@
-#Charity Project
+# Charity Project
 
 Application for charity organizations in which users can easily give unnecessary things to those in need.
 Created to complete the portfolio project in Coders Lab. Part of the project created using MVC and part REST.
 
-##Technologies
+## Technologies
 
--Spring boot 
+- Spring boot 
 
--Spring Security
+- Spring Security
 
--Hibernate
+- Hibernate
 
--Thymeleaf
+- Thymeleaf
 
--Junit
+- Junit
 
 
 
